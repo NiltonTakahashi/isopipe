@@ -176,7 +176,7 @@ function render(){SS=1;const V_={l:$('v_l').checked,d:$('v_d').checked,n:$('v_n'
   if($('elv').checked&&s.a[2]==s.b[2]){const fe=s.it.length?.16:.5,m_=PP([a[0]+dx*fe,a[1]+dy*fe],-9);let ra=an;if(ra>90||ra<-90)ra+=180;o+=`<text data-lb="e" class="halo" transform="translate(${m_[0]},${m_[1]}) rotate(${ra})" y="9" font-size="10" fill="var(--mut)" text-anchor="middle">EL. ${(((+$('elb').value||0)+s.a[2])/1000).toFixed(3)}</text>`}
   const tl=[V_.l?R(Lm):'',V_.d?'Ø'+s.d.dn+'"':''].filter(Boolean).join(' · ');if(fs.length>2&&V_.l){for(let q=0;q<fs.length-1;q++)if(fs[q+1]-fs[q]>1e-6)dim(fs[q],fs[q+1],off,R((fs[q+1]-fs[q])*Lm));dim(0,1,off+26,tl)}else dim(0,1,off,tl);});
  SS=1;if($('mol').checked)S.forEach((s,i)=>{const a=sp(s.a),b=sp(s.b),dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1;let nx=-dy/L,ny=dx/L;if(ny>0||(Math.abs(ny)<.01&&nx<0)){nx=-nx;ny=-ny}const mx_=(a[0]+b[0])/2,my_=(a[1]+b[1])/2,px=mx_-nx*34,py=my_-ny*34;o+=`<path d="M${mx_} ${my_}L${px} ${py}" stroke="var(--ink)" stroke-width="1"/><circle cx="${px}" cy="${py}" r="11" fill="var(--pn)" stroke="var(--ink)" stroke-width="1.2"/><text x="${px}" y="${py+3.5}" font-size="10" text-anchor="middle" fill="var(--ink)">${String(SN[i]||'').padStart(2,'0')}</text>`});
- if(S.length){const q=sp(S[0].a);o+=`<rect x="${q[0]-5}" y="${q[1]-5}" width="10" height="10" fill="var(--pn)" stroke="var(--pipe)" stroke-width="2"/>`}
+ 
  if(ch){const q=sp(ch);o+=`<circle cx="${q[0]}" cy="${q[1]}" r="7" fill="none" stroke="var(--acc)" stroke-width="2"/>`}
  if($('mol').checked)o+=frSvg();o+=triedro()+norte();
  o+=`<text class="halo" x="14" y="${H-12}" font-size="12" fill="var(--mut)">LINHA: ${esc($('tag').value)} · SEM ESCALA · mm</text>`;
