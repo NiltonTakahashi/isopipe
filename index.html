@@ -267,7 +267,7 @@ const msg=(t,q)=>{$('where').textContent=t;if(!q)toast(t)},lsLoad=()=>{try{retur
 saved=lsLoad();
 function updDoc(){$('docn').textContent=($('nm').value.trim()||'Sem título')+(dirty?' • não salvo':' ✓')}
 function drawList(){if(docsOpen&&!$('mod').hidden)$('mbody').innerHTML=docsHtml()}
-function docsHtml(){saved.sort((a,b)=>b.t-a.t);return`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center"><button data-d="new" class="p">Novo desenho</button><button data-d="imp">Importar arquivo…</button><span class="s">${esc(storeMsg)}</span></div>`+(saved.length?'<div style="overflow-x:auto"><table><tr><th>Nome</th><th>Linha</th><th>Trechos</th><th>Alterado em</th><th></th></tr>'+saved.map(d=>{let n='—';try{n=JSON.parse(d.S).length}catch(e){}return`<tr><td>${esc(d.name)}${d.id==curId?' <b>(aberto)</b>':''}</td><td>${esc(d.tag||'')}</td><td>${n}</td><td>${new Date(d.t).toLocaleString('pt-BR')}</td><td style="white-space:nowrap"><button data-d="open" data-id="${esc(d.id)}" class="p">Abrir</button> <button data-d="dup" data-id="${esc(d.id)}">Duplicar</button> <button data-d="exp" data-id="${esc(d.id)}">Exportar</button> <button data-d="del" data-id="${esc(d.id)}">Excluir</button></td></tr>`}).join('')+'</table></div>':'<p class="s">Nenhum desenho salvo ainda. Dê um nome ao desenho e clique em Salvar.</p>')}
+function docsHtml(){saved.sort((a,b)=>b.t-a.t);return`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center"><button data-d="new" class="p">Novo desenho</button><button data-d="imp">Importar arquivo…</button><button data-d="upall" title="Ajusta todos os desenhos salvos às funções novas (reduções, símbolos etc.)">Atualizar todos para a versão nova</button><span class="s">${esc(storeMsg)}</span></div>`+(saved.length?'<div style="overflow-x:auto"><table><tr><th>Nome</th><th>Linha</th><th>Trechos</th><th>Alterado em</th><th></th></tr>'+saved.map(d=>{let n='—';try{n=JSON.parse(d.S).length}catch(e){}return`<tr><td>${esc(d.name)}${d.id==curId?' <b>(aberto)</b>':''}</td><td>${esc(d.tag||'')}</td><td>${n}</td><td>${new Date(d.t).toLocaleString('pt-BR')}</td><td style="white-space:nowrap"><button data-d="open" data-id="${esc(d.id)}" class="p">Abrir</button> <button data-d="dup" data-id="${esc(d.id)}">Duplicar</button> <button data-d="exp" data-id="${esc(d.id)}">Exportar</button> <button data-d="del" data-id="${esc(d.id)}">Excluir</button></td></tr>`}).join('')+'</table></div>':'<p class="s">Nenhum desenho salvo ainda. Dê um nome ao desenho e clique em Salvar.</p>')}
 function openDocs(){openMod('Meus desenhos',docsHtml());docsOpen=true}
 function snap(name){return{name,tag:$('tag').value,S:JSON.stringify(S),df:JSON.stringify(DF()),t:Date.now()}}
 async function persist(id,o){if(!STANDALONE&&JSON.stringify(o).length>240000){msg('Desenho grande demais para salvar (limite de 256 KB). Use Exportar arquivo.');return false}
@@ -276,12 +276,17 @@ async function persist(id,o){if(!STANDALONE&&JSON.stringify(o).length>240000){ms
 async function saveDoc(copy){let name=$('nm').value.trim()||('Desenho '+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-'));if(copy&&curId)name+=' (cópia)';const id=(!copy&&curId)||('d'+Date.now());msg('Salvando…',1);const ok=await persist(id,snap(name));if(!ok)return;
  curId=id;$('nm').value=name;dirty=false;updDoc();msg(`Salvo ${ok=='conta'?(STANDALONE?'neste aparelho':'na sua conta'):'neste navegador'} às ${new Date().toLocaleTimeString('pt-BR').slice(0,5)}.`);drawList()}
 function loadDoc(d,asNew){let arr;try{arr=typeof d.S=='string'?JSON.parse(d.S):d.S}catch(e){}if(!Array.isArray(arr)){msg('Arquivo de desenho inválido.');return}
- HP();ms=[];S=arr;redNormAll();$('tag').value=d.tag||'';if(d.df)try{Object.entries(typeof d.df=='string'?JSON.parse(d.df):d.df).forEach(([k,v])=>{if($(k))$(k).value=v})}catch(e){}
- $('nm').value=d.name||'';curId=asNew?null:d.id;sel=null;ch=null;openPop();fit();dirty=!!asNew;updDoc();$('mod').hidden=true;msg(asNew?'Desenho importado — clique em Salvar para guardar.':'Desenho aberto: '+(d.name||''))}
+ HP();ms=[];$('tag').value=d.tag||'';if(d.df)try{Object.entries(typeof d.df=='string'?JSON.parse(d.df):d.df).forEach(([k,v])=>{if($(k))$(k).value=v})}catch(e){}
+ const up=upgradeS(arr);
+ $('nm').value=d.name||'';curId=asNew?null:d.id;sel=null;ch=null;openPop();fit();dirty=!!asNew||up;updDoc();$('mod').hidden=true;msg(asNew?'Desenho importado'+(up?' e atualizado para a versão nova':'')+' — clique em Salvar para guardar.':up?'Desenho atualizado para a versão nova do app — clique em Salvar para guardar.':'Desenho aberto: '+(d.name||''))}
 function expDoc(d,cur){let rel=null;if(cur)try{rel=relPack()}catch(e){}else if(d.id!=null&&d.id==curId&&!dirty)try{rel=relPack()}catch(e){}const nm=(d.name||'desenho').replace(/[^\w\-À-ú ]+/g,'_');dl(nm+'-isopipe.json',JSON.stringify({app:'iso-pipe',v:1,name:d.name,tag:d.tag,S:JSON.parse(d.S),df:d.df?JSON.parse(d.df):null,t:d.t,...(rel?{rel}:{})}))}
 async function docAct(a,id,bt){const d=saved.find(x=>x.id==id);
  if(a=='new'){HP();S=[];ms=[];sel=null;ch=null;curId=null;$('nm').value='';openPop();render();dirty=false;updDoc();$('mod').hidden=true;msg('Novo desenho.')}
  else if(a=='imp')$('impf').click();
+ else if(a=='upall'){if(bt.dataset.c!='1'){bt.dataset.c='1';bt.textContent='Confirmar: atualizar '+saved.length+' desenho(s)?';return}bt.disabled=true;bt.textContent='Atualizando…';const keep=S;let n=0,err=0;
+  for(const d0 of saved.slice()){let arr;try{arr=typeof d0.S=='string'?JSON.parse(d0.S):d0.S}catch(e){err++;continue}if(!Array.isArray(arr)){err++;continue}let up=false;try{up=upgradeS(arr)}catch(e){err++;continue}
+   if(up){const{id,...o}=d0;if(await persist(id,{...o,S:JSON.stringify(S),t:Date.now()}))n++;else err++}}
+  S=keep;render();msg((n?n+' desenho(s) atualizado(s).':'Todos os desenhos já estavam na versão nova.')+(err?' '+err+' não puderam ser atualizados.':''));if(n&&curId)toast('Se o desenho aberto foi atualizado, abra-o de novo pela lista.');drawList()}
  else if(!d)return;
  else if(a=='open')loadDoc(d);
  else if(a=='exp')expDoc(d);
@@ -522,6 +527,14 @@ $('visB').onclick=()=>{const p=$('visP');p.hidden=!p.hidden;if(!p.hidden){const 
 document.addEventListener('pointerdown',e=>{if(!e.target.closest('#visP,#visB'))$('visP').hidden=true},true);
 $('v_none').onclick=()=>{['v_l','v_d','cot','v_n','v_a','elv','v_m'].forEach(k=>$(k).checked=false);visSave();render()};
 $('v_all').onclick=()=>{VIS.forEach(k=>$(k).checked=true);visSave();render()};
+function upgradeS(arr){let ch=false;const g=dflt();
+ if(arr.length&&arr[0]&&!Array.isArray(arr[0].a)&&('dx' in arr[0]||'dy' in arr[0]||'dz' in arr[0])){let p=[0,0,0];arr=arr.map(x=>{const b=[p[0]+(+x.dx||0),p[1]+(+x.dy||0),p[2]+(+x.dz||0)],o={a:p,b,d:x.d,it:x.it,m:x.m};p=b;return o});ch=true}
+ const n0=arr.length;arr=arr.filter(x=>x&&Array.isArray(x.a)&&Array.isArray(x.b)&&x.a.length==3&&x.b.length==3);if(arr.length!=n0)ch=true;
+ arr.forEach(x=>{if(!x.d||typeof x.d!='object'){x.d={};ch=true}for(const k in g)if(x.d[k]==null||(x.d[k]===''&&k!='sch')){x.d[k]=g[k];ch=true}if(!(x.d.tn>0)){const w=wall(x.d.dn,x.d.sch);if(w){x.d.tn=w;ch=true}}
+  if(!Array.isArray(x.it)){x.it=[];ch=true}if(!Array.isArray(x.m)){x.m=[];ch=true}const ni=x.it.length;x.it=x.it.filter(m=>m&&SY[m.t]);if(x.it.length!=ni)ch=true;
+  x.it.forEach(m=>{if(typeof m.f!='number'||!(m.f>=0&&m.f<=1)){m.f=.5;ch=true}if(!m.d||typeof m.d!='object'){m.d={...x.d,name:SY[m.t]};ch=true}if(!m.d.name){m.d.name=SY[m.t];ch=true}if(m.d.nc==null){m.d.nc=NOCALC.has(m.t);ch=true}if(!(m.d.dn>0)){m.d.dn=x.d.dn;ch=true}if(RED.has(m.t)&&!(m.d.dn2>0)){m.d.dn2=smaller(m.d.dn);ch=true}});
+  x.m.forEach(q=>{if(typeof q.j!='number'||q.j>=x.it.length){q.j=-1;ch=true}if(typeof q.f!='number'){q.f=.5;ch=true}if(q.t==null){q.t='';ch=true}})});
+ S=arr;const b=JSON.stringify(S);redNormAll();return ch||JSON.stringify(S)!==b}
 const TR=matchMedia('(pointer:coarse)').matches?1.8:1;
 let cmP=null;function showCM(e,p){cmP=p;const r=$('cv').getBoundingClientRect(),m=$('cm');m.hidden=false;m.style.left=Math.max(4,Math.min(e.clientX-r.left,r.width-200))+'px';m.style.top=Math.max(4,Math.min(e.clientY-r.top,r.height-260))+'px'}
 svg.oncontextmenu=e=>{e.preventDefault();showCM(e,pt(e))};
