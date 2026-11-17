@@ -1,5 +1,5 @@
 // ISO-PIPE — funcionamento offline. Mude VERSAO quando publicar arquivos novos.
-const VERSAO='isopipe-v1';
+const VERSAO='isopipe-v2';
 const ARQUIVOS=['./','index.html','manifest.webmanifest','lib/xlsx.full.min.js','lib/pdf.min.js','lib/pdf.worker.min.js','icons/icon-180.png','icons/icon-192.png','icons/icon-512.png','icons/maskable-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(VERSAO).then(c=>c.addAll(ARQUIVOS)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==VERSAO).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
