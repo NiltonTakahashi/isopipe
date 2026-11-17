@@ -1,0 +1,46 @@
+ISO-PIPE · Isométrico de Tubulação — versão para Android (tablet e celular)
+===========================================================================
+
+O que é
+- Um app instalável pelo Chrome (PWA). Depois de instalado, abre pelo ícone
+  ISO-PIPE na tela inicial, em tela cheia, e funciona SEM INTERNET.
+- Os desenhos ficam salvos no próprio aparelho.
+
+1) Colocar o app num endereço na internet (uma vez só)
+   O Android só instala apps desse tipo a partir de um endereço https.
+   Opção simples — Netlify Drop (gratuito):
+     a. No computador, abra  https://app.netlify.com/drop
+     b. Arraste a pasta "isopipe-android" inteira para a área indicada.
+     c. Crie a conta / faça login quando pedir, para o site não ficar
+        protegido por senha temporária e não se perder.
+     d. Anote o endereço gerado (termina em .netlify.app).
+   Também serve: GitHub Pages, servidor interno da empresa ou qualquer
+   hospedagem de site estático com https. Envie TODOS os arquivos e pastas.
+
+2) Instalar no tablet ou celular
+     a. Abra o endereço no Chrome do Android.
+     b. Toque em "⬇ Instalar app" (no topo do app) ou no menu ⋮ do Chrome
+        → "Instalar app" / "Adicionar à tela inicial".
+     c. Abra uma vez com internet. A partir daí funciona offline.
+
+3) (Opcional) Gerar um arquivo APK
+     a. Acesse https://www.pwabuilder.com e cole o endereço do passo 1.
+     b. Escolha Android e baixe o pacote. Instale o .apk no aparelho
+        (o Android pede para permitir "fontes desconhecidas").
+     c. Para o app abrir sem a barra de endereço, publique o arquivo
+        assetlinks.json que o PWABuilder gera em
+        <seu endereço>/.well-known/assetlinks.json
+
+Atualizar o app depois
+- Substitua os arquivos no mesmo endereço e mude a linha
+  const VERSAO='isopipe-v1'  no arquivo sw.js (ex.: isopipe-v2).
+  Os aparelhos pegam a versão nova ao abrir o app com internet.
+
+Diferenças em relação à versão aberta dentro do Claude
+- Desenhos salvos no aparelho (não sincronizam com a conta Claude nem com
+  outros aparelhos). Use "Exportar arquivo" para cópia de segurança e
+  "Importar arquivo…" para levar um desenho de um aparelho para outro.
+- "Ler esboço (foto ou PDF)" não aparece, porque depende do Claude.
+- Exportações (SVG, CSV, XLSX, relatório) vão para a pasta Downloads.
+- Botão "☰ Painel" esconde o painel lateral para ganhar área de desenho
+  (no celular ele já começa escondido).

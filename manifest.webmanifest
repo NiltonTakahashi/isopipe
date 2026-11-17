@@ -1,0 +1,19 @@
+{
+  "name": "ISO-PIPE · Isométrico de Tubulação",
+  "short_name": "ISO-PIPE",
+  "description": "Desenho isométrico de tubulação com cálculo de espessura mínima (ASME B31.3) e registro de medições.",
+  "lang": "pt-BR",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1a1d23",
+  "theme_color": "#1a1d23",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
