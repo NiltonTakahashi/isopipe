@@ -279,7 +279,7 @@ $('instB').onclick=async()=>{if(!instEv)return;instEv.prompt();try{await instEv.
 window.addEventListener('appinstalled',()=>{$('instB').hidden=true;toast('App instalado. Abra pelo ícone ISO-PIPE na tela inicial.')});
 $('palB').onclick=()=>{document.body.classList.toggle('nopal');setTimeout(()=>{size();render()},30)};
 if(innerWidth<700)document.body.classList.add('nopal');
-const APPV='v21';{const bb=[...document.querySelectorAll('b')].find(x=>x.textContent.trim()=='ISO·PIPE');if(bb)bb.insertAdjacentHTML('beforeend',` <small style="font-weight:400;opacity:.6;font-size:11px">${APPV}</small>`)}
+const APPV='v28';{const bb=[...document.querySelectorAll('b')].find(x=>x.textContent.trim()=='ISO·PIPE');if(bb)bb.insertAdjacentHTML('beforeend',` <small style="font-weight:400;opacity:.6;font-size:11px">${APPV}</small>`)}
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){let rl=0;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(rl)return;rl=1;location.reload()});navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{r.update();document.addEventListener('visibilitychange',()=>{if(!document.hidden)r.update()})}).catch(()=>{})}
 addEventListener('online',()=>toast('Conectado.'));addEventListener('offline',()=>toast('Sem internet — o app continua funcionando e salvando no aparelho.'));
 let store=null,saved=[],curId=null,dirty=false,docsOpen=false,storeMsg='';const LS='iso-desenhos-v2';
